@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Story | Reserve Your Table</title>
+
+    <!-- font awesome cdn link  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <link rel="stylesheet" href="css/reservation.css">
+</head>
+<script>
+    function getCookie(name) {
+        
+        // Split cookie string and get all individual name=value pairs in an array
+        var cookieArr = document.cookie.split(";");
+        
+        // Loop through the array elements
+        for(var i = 0; i < cookieArr.length; i++) {
+            var cookiePair = cookieArr[i].split("=");
+            
+            /* Removing whitespace at the beginning of the cookie name
+            and compare it with the given string */
+            if(name == cookiePair[0].trim()) {
+                // Decode the cookie value and return
+                return decodeURIComponent(cookiePair[1]);
+            }
+        }
+        }
+     function ReadCookie() {
+              var firstName = getCookie("name");
+               if(!firstName)
+            {
+                location.href="/login"
+            }
+              if(firstName) {
+
+                  if(firstName=="admin")
+                  {
+                        document.getElementById("login").style.display = "none";
+                        document.getElementById("admin").style.display = "inline";
+                                                document.getElementById("cart").style.display = "none";
+                          document.getElementById("reserv").href = "/admin_reserv";
+                        document.getElementById("admin").style.display = "inline";
+                      
+                        documet.getElementById("add").style.display="inline";
+                        document.getElementById("logout").style.display = "inline";
+                  }
+                  else
+                  {
+                    
+                    document.getElementById("login").style.display = "none";
+                    document.getElementById("admin").style.display = "none";
+                    document.getElementById("add").style.display = "none";
+                    document.getElementById("logout").style.display = "inline";
+                  }
+
+                    //document.cookie = "login=; max-age=0";
+                } else {
+                  
+                     document.getElementById("logout").style.display = "none";
+                    
+            }
+    }
+    function Book()
+    {
+
+        var From = document.getElementById('From').value;
+        var To = document.getElementById('To').value;
+        var Date = document.getElementById('Date').value;
+        var Table = document.getElementById('Table').value;
+        var todayDate = new window.Date(); //Today Date  
+        
+        //Date validation
+        
+        //time validation
+        
+        var todaydate=new window.Date().toLocaleDateString('en-CA');
+        
+        if( From>=To )
+        {
+            
+                alert("Enter Valid Time");
+        }
+        else if(Date<=todaydate)
+        {
+            alert("Enter Valid  Date For Reservation");
+        }
+        else if(Table==0)
+        {
+            alert("Enter Table Number");
+        }
+        else
+        {
+            var firstName = getCookie("name");
+            fetch('/reserv/' + firstName,{
+            method:'POST',
+            headers:{
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"From": From,"To": To,"Date1": Date,"Table": Table})
+            
+            })
+            .then(res=>{if(res.status==201)
+            {
+                alert("booked successful");
+            }
+            else if(res.status==406)
+            {
+                alert("Table already booked");
+            }
+            })
+        }
+    }
+</script>
+
+<body onload="ReadCookie()">
+    <!-- header section starts  -->
+
+    <header class="header">
+
+        <a href="#" class="logo">
+            <img src="images/logo.png" alt="">
+        </a>
+
+        <nav class="navbar">
+            <a href="/">home</a>
+            <a href="/purchase">Purchase items</a>
+            <a id="reserv" href="/reservation">Reservation</a>
+            <a id="cart"  href="/cart">Cart</a>
+             <a href="/orders">Past Orders</a>
+       
+            <a href="/#about">About Us</a>
+            <a href="/#contact">Contact Us</a>
+            <a id="login"  href="/login">Login</a>
+            <a id="logout" href="/logout">Logout</a>
+            <a id="admin" href="#">Admin</a>
+            <a id="add" href="/add_products">Add Product</a>
+            
+        </nav>
+
+
+
+
+    </header>
+
+    <!-- header section ends -->
+
+    <!-- product section starts  -->
+    
+    <section class="products" id="products">
+
+        <h1 class="heading"> Reserve <span> Table</span> </h1>
+
+        <div class="container">
+            <form action="">
+                <div class="form-group">
+                    <label for="">From :</label>
+                    <select id='From' onchange="" name="From" class="form-control">
+                        <option value="0">--- Select Time ---</option>
+                        {{!-- <option value="9">9 AM</option> --}}
+                        <option value="10">10 AM</option>
+                        <option value="11">11 AM</option>
+                        <option value="12">12 PM</option>
+                        <option value="13">1 PM</option>
+                        <option value="14">2 PM</option>
+                        <option value="15">3 PM</option>
+                        <option value="16">4 PM</option>
+                        <option value="17">5 PM</option>
+                        <option value="18">6 PM</option>
+                        <option value="18">7 PM</option>
+                        <option value="19">8 PM</option>
+                        <option value="20">9 PM</option>
+                        <option value="21">10 PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="">To :</label>
+                    <select id='To' onchange="" name="To" class="form-control">
+                        <option value="0">--- Select Time ---</option>
+                        {{!-- <option value="9">9 AM</option> --}}
+                        <option value="10">10 AM</option>
+                        <option value="11">11 AM</option>
+                        <option value="12">12 PM</option>
+                        <option value="13">1 PM</option>
+                        <option value="14">2 PM</option>
+                        <option value="15">3 PM</option>
+                        <option value="16">4 PM</option>
+                        <option value="17">5 PM</option>
+                        <option value="18">6 PM</option>
+                        <option value="18">7 PM</option>
+                        <option value="19">8 PM</option>
+                        <option value="20">9 PM</option>
+                        <option value="21">10 PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="">Date :</label>
+                    <input type="date" class="form-control" name="Date" id="Date">
+                </div>
+                <div class="form-group">
+                    <label for="">Table No :</label>
+                    <select id='Table' onchange="" name="Table" class="form-control">
+                        <option value="0">--- Select Table---</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                       
+                    </select>
+                </div>
+                
+                <input type="button" onclick="Book()" class="btn" value="Book Now">
+            </form>
+        </div>	
+
+        </div>
+
+    </section>
+
+    <!-- product section ends -->
+    <!-- footer section starts  -->
+
+    <section class="footer">
+        <div class="credit">2022@all rights reserved.Created Using Html and CSS
+            <p><span>Contact us on : </span>0261-235758 <span>Mail us on : </span>@gmail.com </p>
+        </div>
+    </section>
+
+    <!-- footer section ends -->
+
+
+    <!-- custom js file link  -->
+    <script src="js/script.js"></script>
+</body>
+
+</html>

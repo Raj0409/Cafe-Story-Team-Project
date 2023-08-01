@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Story | Place Your Order</title>
+
+    <!-- font awesome cdn link  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <link rel="stylesheet" href="css/purchase.css">
+</head>
+<script>
+    var val;
+    function getCookie(name) {
+    // Split cookie string and get all individual name=value pairs in an array
+    var cookieArr = document.cookie.split(";");
+    
+    // Loop through the array elements
+    for(var i = 0; i < cookieArr.length; i++) {
+        var cookiePair = cookieArr[i].split("=");
+        
+        /* Removing whitespace at the beginning of the cookie name
+        and compare it with the given string */
+        if(name == cookiePair[0].trim()) {
+            // Decode the cookie value and return
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    }
+
+    function all() {
+
+              var firstName = getCookie("name");
+             
+              if(!firstName)
+            {
+                location.href="/login"
+            }
+              if(firstName) {
+
+                  if(firstName=="admin")
+                  {
+                        document.getElementById("login").style.display = "none";
+                        document.getElementById("cart").style.display = "none";
+                        document.getElementById("reserv").href = "/admin_reserv";
+                        document.getElementById("admin").style.display = "inline";
+                        document.getElementById("add").style.display="inline";
+                        document.getElementById("logout").style.display = "inline";
+                  }
+                  else
+                  {
+                    
+                    document.getElementById("login").style.display = "none";
+                    document.getElementById("admin").style.display = "none";
+                    document.getElementById("add").style.display = "none";
+                    document.getElementById("logout").style.display = "inline";
+                  }
+
+                    //document.cookie = "login=; max-age=0";
+                } else {
+                  
+                     document.getElementById("logout").style.display = "none";
+                    
+            }
+    
+			let list;
+	fetch('/api/items')
+	.then(res=>res.json())
+	.then(data =>
+    {
+        console.info(data);
+        
+       for(let i in data)
+       {
+
+           var newDiv1 = document.createElement('div');
+           newDiv1.className = 'box';
+
+           var newDiv = document.createElement('div');
+           newDiv.className = 'content';
+
+          
+
+        var img = document.createElement('img');
+        img.className="image";
+        img.src="images/"+data[i].image;
+    
+
+        newDiv.appendChild(img);
+        
+
+        var newh2 = document.createElement('p');
+        var t = document.createTextNode(data[i].title);
+        newh2.appendChild(t);
+        newh2.className = 'title';
+        newh2.style.color='white';
+        newDiv.appendChild(newh2);
+
+        var newh2 = document.createElement('p');
+       var t = document.createTextNode(data[i].description);
+       newh2.appendChild(t);
+       newDiv.appendChild(newh2);
+
+       var newh2 = document.createElement('p');
+       var s = document.createElement('span');
+       
+       var t = document.createTextNode("Main Ingredient : ");
+       s.appendChild(t);
+       var p = document.createTextNode(data[i].ingredient);
+       newh2.appendChild(s);
+       newh2.appendChild(p);
+       newDiv.appendChild(newh2);
+
+         var newh2 = document.createElement('p');
+         newh2.style.display="inline-block";
+       var t = document.createTextNode("Price : ");
+        var s = document.createElement('span');
+       s.appendChild(t);
+       var p = document.createTextNode(data[i].price);
+       var t = document.createTextNode(" INR ");
+       
+       var newh3 = document.createElement('p');
+       newh3.style.float = "right";
+       var t1 = document.createTextNode("Qty : ");
+       newh3.appendChild(t1);
+
+       var inh3 = document.createElement('input');
+       inh3.type="number";
+        inh3.value=1;
+        inh3.min=1;
+       inh3.id=data[i].title;
+       inh3.style.width="50px";
+
+
+       newh2.appendChild(s);
+       newh2.appendChild(p);
+
+        newh2.appendChild(t);
+       newDiv.appendChild(newh2);
+       newh3.appendChild(inh3);
+
+       newDiv.appendChild(newh3);
+       
+
+
+       var newh2 = document.createElement('br');
+       newDiv.appendChild(newh2);
+
+       var newh2 = document.createElement('button');
+       newh2.onclick=function(){
+           alert(data[i]._id);
+           var v = document.getElementById(data[i].title).value;
+           
+            var firstName = getCookie("name");
+            fetch('/api/cart/'+ firstName,{
+            method:'POST',
+            headers:{
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"productId":data[i]._id,"quantity":v})
+            }) 
+            .then(res=> {
+                if(res.status==201)
+                {
+                    alert('added success fully');
+                    location.href="./cart";
+                }
+                else
+                {
+                    alert('adding failed');
+                }
+            }) 
+          
+       };
+       newh2.className="btn";
+       var t = document.createTextNode("Add to Cart");
+       newh2.appendChild(t);
+       newDiv.appendChild(newh2);
+
+
+
+
+
+
+
+        newDiv1.appendChild(newDiv);
+        document.getElementById("id1").appendChild(newDiv1);
+        console.info(data[i].title);
+        
+       }
+       
+    })
+	}
+</script>
+<body onload="all()">
+    <!-- header section starts  -->
+
+    <header class="header">
+
+        <a href="#" class="logo">
+            <img src="images/logo.png" alt="">
+        </a>
+
+         <nav class="navbar">
+            <a href="/">home</a>
+            <a href="/purchase">Purchase items</a>
+            <a id="reserv" href="/reservation">Reservation</a>
+            <a id="cart" href="/cart">Cart</a>
+             <a href="/orders">Past Orders</a>
+       
+            <a href="/#about">About Us</a>
+            <a href="/#contact">Contact Us</a>
+            <a id="login"  href="/login">Login</a>
+            <a id="logout" href="/logout">Logout</a>
+            <a id="admin" href="#">Admin</a>
+            <a id="add" href="/add_products">Add Product</a>
+            
+        </nav>
+
+
+
+    </header>
+
+    <!-- header section ends -->
+
+    <!-- product section starts  -->
+
+    <section class="products" id="products">
+
+        <h1 class="heading"> Our <span> Menu</span> </h1>
+
+        <div id = "id1" class="box-container">
+
+
+           
+            
+            
+            
+
+            
+
+        </div>
+
+    </section>
+
+    <!-- product section ends -->
+    <!-- footer section starts  -->
+
+    <section class="footer">
+        <div class="credit">2022@all rights reserved.Created Using Html and CSS
+            <p><span>Contact us on : </span>0261-235758 <span>Mail us on : </span>@gmail.com </p>
+        </div>
+    </section>
+
+    <!-- footer section ends -->
+
+
+    <!-- custom js file link  -->
+    <script src="js/script.js"></script>
+</body>
+
+</html>
